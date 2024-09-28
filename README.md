@@ -4,5 +4,5 @@
 ## Check hosts are up
 
 ```bash
-ansible all -m ping
+ansible k3s_cluster -m ping
 ```

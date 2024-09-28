@@ -1,16 +1,22 @@
-- hosts: all
+---
+- hosts: k3s_cluster
   become: true
   become_user: root
   tasks:
-    - name: Update all packages to their latest version
-      ansible.builtin.apt:
-        name: "*"
-        state: latest
-
+    - name: Update apt repo and cache on all Debian/Ubuntu boxes
+      when: ansible_os_family == 'Debian'
+      apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+    - name: Upgrade all packages on debian servers
+      when: ansible_os_family == 'Debian'
+      apt: upgrade=yes force_apt_get=yes
+    - name: Upgrade all packages on arch servers
+      when: ansible_os_family == 'Archlinux'
+      pacman:
+        update_cache: yes
+        upgrade: yes
     - name: Check if a reboot is needed on all servers
       register: reboot_required_file
       stat: path=/var/run/reboot-required get_checksum=no
-
     - name: Reboot the box if kernel updated
       reboot:
         msg: "Reboot initiated by Ansible for kernel updates"
