@@ -1,0 +1,9 @@
+---
+- hosts: k3s_cluster
+  become: true
+  become_user: root
+  tasks:
+  - name : Install open-iscsi
+    apt: name=open-iscsi state=latest update_cache=true
+  - name : Install nfs-common
+    apt: name=nfs-common state=latest update_cache=true
